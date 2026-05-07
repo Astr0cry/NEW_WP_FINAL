@@ -1,49 +1,4 @@
-const ele = document.getElementById("phone");
-const phoneButton = document.getElementById("button");
-let currVid = 0;
-phoneButton.addEventListener("click",function(){
-    const vidPlayer =document.getElementById("video-player");
-    if(currVid==2){
-        currVid = 0
-    }
-    else{
-        currVid++
-    }
-    vidPlayer.src = `resources/videos/${currVid}.mp4`
-})
-function dragElement(ele){
-    var pos1 = 0, pos2 = 0,pos3 =0,pos4 = 0;
-    ele.onmousedown = dragMouseDown;
-}
 
-function dragMouseDown(e){
-    e=e || window.event;
-    e.preventDefault();
-
-    pos3 = e.clientX;
-    pos4 = e.clientY;
-    document.onmouseup = closeDragElement;
-    document.onmousemove = elementDrag;
-}
-function elementDrag(e){
-    e = e || window.event;
-    e.preventDefault();
-
-    pos1 = pos3 - e.clientX;
-    pos2 = pos4 - e.clientY;
-    pos3 = e.clientX;
-    pos4 = e.clientY;
-
-    ele.style.top = (ele.offsetTop - pos2) + "px";
-    ele.style.left = (ele.offsetLeft - pos1) + "px";
-}
-
-function closeDragElement(){
-    document.onmouseup = null;
-    document.onmousemove = null;
-}
-
-dragElement(ele);
 class Ticket{
     constructor(name,width,height,winning_imgs,losing_imgs){
         this.name = name;

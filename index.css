@@ -1,6 +1,3 @@
-*{
-    border: solid, red,1px;
-}
 
 /* IDs*/
 #header{
@@ -71,7 +68,19 @@
     }
 }
 
+#inventory{
+    transition: .5s ease-in-out;
+    height:5%;
+    width:100%;
+    background-color: blueviolet;
+    position: absolute;
+    bottom: 0;
+}
 
+#inventory:hover{
+    transition: .5s ease-in-out;
+    height: 40%;
+}
 
 
 /*classes*/
@@ -125,6 +134,7 @@ body{
     width: 100vw;
     height:100vh;
     margin:0px;
+    background-image: linear-gradient(indigo,violet);
 }
 
 html{
