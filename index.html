@@ -4,19 +4,25 @@
         <title>Lottery Ticket</title>
         <link href="index.css" rel="stylesheet">
         <link rel="icon" href="resources/images/favicon/fav.png">
+
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Handjet:wght,ELSH@100..900,2&display=swap" rel="stylesheet">
     </head>
 
     <body>
 
         <div id = "header">
-            <h1 id ="title-heading">Lottery Ticket</h1>
+            <h1 id ="title-heading" class="handjet">Lottery Ticket</h1>
             <div id="button-bar">
-                <div class="header-button" id="shop"><p>Shop</p></div>
-                <div class="header-button"><p>Tickets</p></div>
-                <div class="header-button"><p>IDK</p></div>
+                <div class="header-button handjet" id="shop"><p>Shop</p></div>
+                <div class="header-button handjet"><p>Tickets</p></div>
+                <div class="header-button handjet"><p>IDK</p></div>
             </div>
         </div>
-
+        <div id = "money" class="handjet">
+            <p>Money: $</p> <p id="money amount">0</p>
+        </div>
         <div id="lottery-ticket">
             <div id="cells">
             </div>
@@ -26,7 +32,9 @@
                 <div id = "winners"></div>
             </div>
         </div>
-        <div id = "inventory"></div>
+        <div id = "inventory">
+            <div id="arrow"><img src="resources/images/inv_arrow.png"></div>
+        </div>
     </body>
     <script src="index.js"></script>
 </html>
