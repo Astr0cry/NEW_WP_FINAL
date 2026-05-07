@@ -92,6 +92,7 @@
     background-color: purple;
 }
 #money{
+    animation: float_around 2s ease-in-out infinite;
     display: flex;
     position: absolute;
     color:lime;
@@ -156,7 +157,22 @@
     }
 }
 
+/*ANIMATIONS*/
 
+@keyframes float_around{
+    0%{
+        transform: translateX(0%);
+        transform: translateY(0%);
+    }
+    50%{
+        transform: translate(10%,-10%);
+
+    }
+    100%{
+        transform: translatey(0%);
+        transform: translateX(0%);
+    }
+}
 
 
 
