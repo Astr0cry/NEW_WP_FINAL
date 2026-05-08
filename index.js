@@ -1,11 +1,28 @@
 
 class Ticket{
-    constructor(name,width,height,winning_imgs,losing_imgs){
+    constructor(name,width,height,winning_imgs,losing_imgs,max,min){
         this.name = name;
+
+        //Dimensions
         this.width = width;
         this.height = height;
+
+        //Images
         this.winning_imgs = winning_imgs;
         this.losing_imgs = losing_imgs;
+        
+        //Cell Values
+        this.max = max;
+        this.min = min;
+
+        //Cell Class
+        this.Cell = class{
+            constructor(img,value){
+                this.img = img;
+                this.value = value;
+            }
+        }
+
         this.cellArray = this.genCellArray();
     }
 
@@ -15,6 +32,7 @@ class Ticket{
             let row = []
             for(let i = 0;i<this.width;i++){
                 const chance = Math.random();
+                const value = randint(this.min,this.max);
                 let chosen_imgs = null
                 if(chance>.95){
                     chosen_imgs = this.winning_imgs;
@@ -22,7 +40,7 @@ class Ticket{
                 else{
                     chosen_imgs = this.losing_imgs;
                 }
-                const cell = chosen_imgs[randint(0,chosen_imgs.length)];
+                const cell = new this.Cell(chosen_imgs[randint(0,chosen_imgs.length)],value);
                 row.push(cell);
             }
             cellArray.push(row);
@@ -41,7 +59,7 @@ class Base_Ticket extends Ticket{
         const losing_imgs = [
             "resources/images/favicon/fav.png"
         ]
-        super("Base Ticket",5,5,winning_imgs,losing_imgs)
+        super("Base Ticket",5,5,winning_imgs,losing_imgs,5,1)
     }
 }
 
@@ -65,7 +83,7 @@ function gen_lottery(ticket){
         for(let i =0;i<width;i++){
             const cell = document.createElement("div");
             cell.className = "cell";
-            cell.innerHTML = `<img src = ${ticket.cellArray[r][i]}>`;
+            cell.innerHTML = `<img src = ${ticket.cellArray[r][i].img}>`;
             
             cell.getElementsByTagName("img")[0].style.opacity = 10;
             cell_row.appendChild(cell);
