@@ -1,4 +1,4 @@
-
+let money = 0;
 class Ticket{
     constructor(name,width,height,winning_imgs,losing_imgs,max,min){
         this.name = name;
@@ -68,7 +68,19 @@ function randint(min,max){
     return Math.floor(Math.random()*(max-min)+min);
 }
 
+function addMoney(value){
+    money += value;
+    const addition = document.createElement("p");
+    const money_amount = document.getElementById("money-amount");
+    const body = document.getElementsByTagName("body")[0];
+    addition.className = "addition";
+    addition.style.top = money_amount.style.top;
+    addition.style.left = money_amount.style.left;
+    addition.textContent = `+${value}`;
 
+    body.appendChild(addition);
+    money_amount.textContent = money;
+}
 function gen_lottery(ticket){
     console.log(ticket);
     const width = ticket.width;
@@ -82,10 +94,27 @@ function gen_lottery(ticket){
 
         for(let i =0;i<width;i++){
             const cell = document.createElement("div");
+            const cellObj = ticket.cellArray[r][i];
             cell.className = "cell";
-            cell.innerHTML = `<img src = ${ticket.cellArray[r][i].img}>`;
-            
-            cell.getElementsByTagName("img")[0].style.opacity = 10;
+            cell.innerHTML = `<img src = ${cellObj.img}> <p>$${cellObj.value}</p>`;
+
+            cell.onclick = function (){
+                const img = cell.getElementsByTagName("img")[0]
+                const p = cell.getElementsByTagName("p")[0]
+
+                p.style.opacity = Number(p.style.opacity) + .2;
+                img.style.opacity = Number(img.style.opacity) + .2;
+                if(p.style.opacity =='1'){
+
+                    this.onclick = null;
+                    console.log(cellObj);
+                    addMoney(cellObj.value);
+                }
+                
+            }
+
+            cell.getElementsByTagName("img")[0].style.opacity = 0;
+            cell.getElementsByTagName("p")[0].style.opacity = 0;
             cell_row.appendChild(cell);
         }
         cells.appendChild(cell_row);
