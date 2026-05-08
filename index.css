@@ -25,9 +25,11 @@
     background-color: black;
     display: flex;
     justify-self: center;
+    box-shadow: 1vw 1vw rgba(76, 0, 130, 0.226);
 }
 
 #title-heading{
+    animation: float_around 2s ease-in-out infinite .5s;
     display: flex;
     justify-content: center;
     font-size: clamp(.5rem, 2rem, 2.5vw);
@@ -165,7 +167,7 @@
         transform: translateY(0%);
     }
     50%{
-        transform: translate(10%,-10%);
+        transform: translate(.5vw,-.5vh);
 
     }
     100%{
