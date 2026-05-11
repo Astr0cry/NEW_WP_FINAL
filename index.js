@@ -1,8 +1,8 @@
 let money = 0;
 class Ticket{
-    constructor(name,width,height,winning_imgs,losing_imgs,max,min,winSFX){
+    constructor(name,width,height,winning_imgs,losing_imgs,max,min,winSFX,price){
         this.name = name;
-
+        this.price = price;
         //Dimensions
         this.width = width;
         this.height = height;
@@ -63,21 +63,23 @@ class Base_Ticket extends Ticket{
         ]
         const winSFX = "resources/audio/base_ticket/collect.mp3";
 
-        super("Base Ticket",5,5,winning_imgs,losing_imgs,5,1,winSFX)
+        super("Base Ticket",5,5,winning_imgs,losing_imgs,5,1,winSFX,0)
     }
 }
 
 const test_ticket = new Base_Ticket();
 
 const shopButton = document.getElementById("shop-button");
+
 shopButton.onclick = () =>{
     const shopPop = document.getElementById("shop-popup");
-    if(shopPop.className == "active-popup"){
-        shopPop.className = "deactive-popup";
+    if(shopPop.classList.contains("active-popup")){
+        shopPop.classList.remove("active-popup");
+        shopPop.classList.add("deactive-popup");
     }
     else{
-        shopPop.style.display = "flex";
-        shopPop.className = "active-popup";
+        shopPop.classList.remove("deactive-popup");
+        shopPop.classList.add("active-popup");
     }
 }
 
@@ -166,5 +168,4 @@ function gen_lottery(ticket){
         winners.appendChild(winning_img);
     }
 }
-console.log(test_ticket);
 gen_lottery(test_ticket);
