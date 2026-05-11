@@ -34,7 +34,7 @@ class Ticket{
                 const chance = Math.random();
                 const value = randint(this.min,this.max);
                 let chosen_imgs = null
-                if(chance>.95){
+                if(chance>.5){
                     chosen_imgs = this.winning_imgs;
                 }
                 else{
@@ -67,18 +67,28 @@ const test_ticket = new Base_Ticket();
 function randint(min,max){
     return Math.floor(Math.random()*(max-min)+min);
 }
-
+function remove(element){
+    console.log("ran");
+    const body = document.getElementsByTagName("body")[0];
+    setTimeout(() => {
+        body.removeChild(element);
+    }, 2000);
+}
 function addMoney(value){
     money += value;
     const addition = document.createElement("p");
     const money_amount = document.getElementById("money-amount");
+    const money_amount_body = money_amount.getBoundingClientRect();
     const body = document.getElementsByTagName("body")[0];
     addition.className = "addition";
-    addition.style.top = money_amount.style.top;
-    addition.style.left = money_amount.style.left;
-    addition.textContent = `+${value}`;
+    addition.style.top = `${money_amount_body.top}px`;
+    console.log(money_amount_body.top)
+    console.log(money_amount.style.top);
+    addition.style.left = `${money_amount_body.left}px`;
+    addition.textContent = `+$${value}`;
 
     body.appendChild(addition);
+    remove(addition)
     money_amount.textContent = money;
 }
 function gen_lottery(ticket){
@@ -99,16 +109,23 @@ function gen_lottery(ticket){
             cell.innerHTML = `<img src = ${cellObj.img}> <p>$${cellObj.value}</p>`;
 
             cell.onclick = function (){
+                const collect_sound = new Audio("resources/audio/collect.mp3");
                 const img = cell.getElementsByTagName("img")[0]
                 const p = cell.getElementsByTagName("p")[0]
 
                 p.style.opacity = Number(p.style.opacity) + .2;
                 img.style.opacity = Number(img.style.opacity) + .2;
                 if(p.style.opacity =='1'){
-
                     this.onclick = null;
-                    console.log(cellObj);
-                    addMoney(cellObj.value);
+                    console.log(ticket.winning_imgs);
+                    console.log(cellObj.img);
+                    if(ticket.winning_imgs.includes(cellObj.img)){
+                        collect_sound.play();
+                        addMoney(cellObj.value);
+                    }
+                    else{
+                        console.log("loser");
+                    }
                 }
                 
             }

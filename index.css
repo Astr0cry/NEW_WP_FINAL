@@ -166,6 +166,8 @@
 
 .addition{
     position: absolute;
+    font-size: clamp(.2vw,1.5rem,2vw);
+    font-family: "Handjet", sans-serif;;
     opacity: 0;
     animation: float_up 1s;
     color:lime;
@@ -195,7 +197,7 @@
     }
     to{
         opacity: 0;
-        transform: translateY(-.5vh);
+        transform: translateY(-2vh);
     }
 
 }
@@ -220,6 +222,7 @@ html{
 /*Fonts*/
 
 .handjet{
+    color:white;
   font-family: "Handjet", sans-serif;
   font-optical-sizing: auto;
   font-weight: 500;
