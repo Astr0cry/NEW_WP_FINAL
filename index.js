@@ -1,6 +1,6 @@
 let money = 0;
 class Ticket{
-    constructor(name,width,height,winning_imgs,losing_imgs,max,min){
+    constructor(name,width,height,winning_imgs,losing_imgs,max,min,winSFX){
         this.name = name;
 
         //Dimensions
@@ -14,6 +14,8 @@ class Ticket{
         //Cell Values
         this.max = max;
         this.min = min;
+
+        this.winSFX = winSFX;
 
         //Cell Class
         this.Cell = class{
@@ -34,7 +36,7 @@ class Ticket{
                 const chance = Math.random();
                 const value = randint(this.min,this.max);
                 let chosen_imgs = null
-                if(chance>.5){
+                if(chance>.95){
                     chosen_imgs = this.winning_imgs;
                 }
                 else{
@@ -59,21 +61,43 @@ class Base_Ticket extends Ticket{
         const losing_imgs = [
             "resources/images/favicon/fav.png"
         ]
-        super("Base Ticket",5,5,winning_imgs,losing_imgs,5,1)
+        const winSFX = "resources/audio/base_ticket/collect.mp3";
+
+        super("Base Ticket",5,5,winning_imgs,losing_imgs,5,1,winSFX)
     }
 }
 
 const test_ticket = new Base_Ticket();
+
+const shopButton = document.getElementById("shop-button");
+shopButton.onclick = () =>{
+    const shopPop = document.getElementById("shop-popup");
+    if(shopPop.className == "active-popup"){
+        shopPop.className = "deactive-popup";
+    }
+    else{
+        shopPop.style.display = "flex";
+        shopPop.className = "active-popup";
+    }
+}
+
 function randint(min,max){
     return Math.floor(Math.random()*(max-min)+min);
 }
+
+
+
+
 function remove(element){
-    console.log("ran");
     const body = document.getElementsByTagName("body")[0];
     setTimeout(() => {
         body.removeChild(element);
     }, 2000);
 }
+
+
+
+
 function addMoney(value){
     money += value;
     const addition = document.createElement("p");
@@ -82,8 +106,6 @@ function addMoney(value){
     const body = document.getElementsByTagName("body")[0];
     addition.className = "addition";
     addition.style.top = `${money_amount_body.top}px`;
-    console.log(money_amount_body.top)
-    console.log(money_amount.style.top);
     addition.style.left = `${money_amount_body.left}px`;
     addition.textContent = `+$${value}`;
 
@@ -91,6 +113,9 @@ function addMoney(value){
     remove(addition)
     money_amount.textContent = money;
 }
+
+
+
 function gen_lottery(ticket){
     console.log(ticket);
     const width = ticket.width;
@@ -109,7 +134,6 @@ function gen_lottery(ticket){
             cell.innerHTML = `<img src = ${cellObj.img}> <p>$${cellObj.value}</p>`;
 
             cell.onclick = function (){
-                const collect_sound = new Audio("resources/audio/collect.mp3");
                 const img = cell.getElementsByTagName("img")[0]
                 const p = cell.getElementsByTagName("p")[0]
 
@@ -117,14 +141,13 @@ function gen_lottery(ticket){
                 img.style.opacity = Number(img.style.opacity) + .2;
                 if(p.style.opacity =='1'){
                     this.onclick = null;
-                    console.log(ticket.winning_imgs);
-                    console.log(cellObj.img);
                     if(ticket.winning_imgs.includes(cellObj.img)){
-                        collect_sound.play();
+                        const winSFX = new Audio(ticket.winSFX);
+                        winSFX.play();
                         addMoney(cellObj.value);
                     }
                     else{
-                        console.log("loser");
+                        
                     }
                 }
                 

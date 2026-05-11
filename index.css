@@ -54,12 +54,14 @@
 
 #ticket-name{
     display: flex;
+    color:black;
     justify-content: center;
     font-size: clamp(.1rem,1.5rem,2vw);
 }
 
 #winner-header{
     display: flex;
+    color:black;
     font-size: clamp(.25rem,1.5rem,2vw);
     justify-self: bottom   ;
 }
@@ -111,6 +113,21 @@
     img{
         height:3vh;
     }
+}
+
+#shop-popup{
+    width:50%;
+    height: 50%;
+    border:solid 2px black;
+    background-color: violet;
+    border-radius: 2%;
+    position: absolute;
+    box-shadow: 1vw 1vw rgba(76, 0, 130, 0.226);;
+    top:25vh;
+    right:25vw;
+    display: none;
+    flex-direction: column;
+    align-items: center;
 }
 /*classes*/
 .header-button{
@@ -173,6 +190,14 @@
     color:lime;
 }
 
+.active-popup{
+    transition: .3s ease-out;
+    transform:translateY(0%);
+}
+.deactive-popup{
+    transition: .3s ease-in;
+    transform: translateY(200%);
+}
 /*ANIMATIONS*/
 
 @keyframes float_around{
@@ -202,6 +227,14 @@
 
 }
 
+@keyframes fly_up{
+    from{
+        transform: translateY(200%);
+    }
+    to{
+        transform: translateY(0%);
+    }
+}
 
 
 
