@@ -81,6 +81,7 @@
     background-color: blueviolet;
     position: absolute;
     bottom: -50%;
+    overflow: scroll;
 }
 
 #inventory:hover{
@@ -114,6 +115,12 @@
         height:3vh;
     }
 }
+
+#inventory-contents{
+    
+}
+
+
 /*classes*/
 .header-button{
     width:clamp(5%,20%,20%);
@@ -197,6 +204,28 @@
 .deactive-popup{
     transition: .3s ease-in;
     transform: translateY(200%);
+}
+.inventory-item{
+    display: flex;
+    flex-direction:row;
+    width:10%;
+    height:10%;
+    border:indigo 2px solid;
+    border-radius: 5%;
+    background-color: violet;;
+    img{
+        aspect-ratio: 1/1;
+        width: 70%;
+    }
+    p{
+        display: flex;
+        font-size: clamp(.25rem,1.5vw,2vw);
+        font-family:"Handjet", sans-serif; ;
+    }
+}
+.inventory-item:hover{
+    transition: .3s;
+    background-color: rgb(234, 150, 234);
 }
 /*ANIMATIONS*/
 

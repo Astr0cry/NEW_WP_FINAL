@@ -1,4 +1,66 @@
-let money = 0;
+
+class Item{
+    constructor(name,description){
+        this.name=name;
+        this.description=description;
+        this.img = `resources/images/items/${this.name}.png`;
+    }
+}
+
+class Booster extends Item{
+    constructor(name,description,stat,increment){
+        super(name,description);
+        this.stat = stat;
+        this.increment = increment;
+    }
+    use(player){
+        switch(this.stat){
+            case "luckBoost":
+                player.luckBoost+=this.increment;
+            break;
+        }
+    }
+}
+
+class FluffyDice extends Booster{
+    constructor(){
+        super("Fluffy Dice","Adds 0.01 to Luck Boost","luckBoost",.01);
+    }
+}
+
+
+class Player{
+    constructor(){
+        this.money = 0;
+        this.items = {
+            "Booster":{}
+        };
+        this.tickets = {};
+        this.winBoost = 0;
+        this.luckBoost = 0;
+    }
+
+    addItem(item){
+        console.log(item);
+        if(item instanceof Item){
+            if(item instanceof Booster){
+                if(item.name in this.items["Booster"]){
+                    this.items["Booster"][item.name][1]++
+                }
+                else{
+                    this.items["Booster"][item.name]= [item,1];
+                }
+                item.use(this);
+            }
+        }
+
+        else if(item instanceof Ticket){
+            console.log("Ticket");
+        }
+        console.log(this);
+    }
+}
+
 class Ticket{
     constructor(name,width,height,winning_imgs,losing_imgs,max,min,winSFX,price){
         this.name = name;
@@ -36,7 +98,7 @@ class Ticket{
                 const chance = Math.random();
                 const value = randint(this.min,this.max);
                 let chosen_imgs = null
-                if(chance>.95){
+                if(chance>.95-(player.luckBoost)){
                     chosen_imgs = this.winning_imgs;
                 }
                 else{
@@ -67,20 +129,31 @@ class Base_Ticket extends Ticket{
     }
 }
 
+const player = new Player();
+for(let i =0;i<50;i++){
+     player.addItem(new FluffyDice());
+}
 const test_ticket = new Base_Ticket();
 
-const shopButton = document.getElementById("shop-button");
-
-shopButton.onclick = () =>{
-    const shopPop = document.getElementById("shop-popup");
-    if(shopPop.classList.contains("active-popup")){
-        shopPop.classList.remove("active-popup");
-        shopPop.classList.add("deactive-popup");
+function popupButton(element){
+    const popups = document.getElementsByClassName("popup");
+    for(let i =0;i<popups.length;i++){
+        const popup = popups[i];
+        if(popup.classList.contains("active-popup") && popup!==document.getElementById(`${element.id}-popup`)){
+            popup.classList.remove("active-popup");
+            popup.classList.add("deactive-popup");
+        }
+    }
+    const popup = document.getElementById(`${element.id}-popup`);
+    if(popup.classList.contains("active-popup")){
+        popup.classList.remove("active-popup");
+        popup.classList.add("deactive-popup");
     }
     else{
-        shopPop.classList.remove("deactive-popup");
-        shopPop.classList.add("active-popup");
+        popup.classList.remove("deactive-popup");
+        popup.classList.add("active-popup");
     }
+    
 }
 
 function randint(min,max){
@@ -98,10 +171,21 @@ function remove(element){
 }
 
 
-
+function gen_inventory(){
+    const inventoryContents = document.getElementById("inventory-contents");
+    inventoryContents.replaceChildren();
+    for(item_type in player.items){
+        for(item in player.items[item_type]){
+            const itemElement = document.createElement("div");
+            itemElement.className = "inventory-item";
+            itemElement.innerHTML = `<img src='${player.items[item_type][item][0].img}'><p>${player.items[item_type][item][1]}`;
+            inventoryContents.appendChild(itemElement);
+        }
+    }
+}
 
 function addMoney(value){
-    money += value;
+    player.money += value;
     const addition = document.createElement("p");
     const money_amount = document.getElementById("money-amount");
     const money_amount_body = money_amount.getBoundingClientRect();
@@ -113,37 +197,55 @@ function addMoney(value){
 
     body.appendChild(addition);
     remove(addition)
-    money_amount.textContent = money;
+    money_amount.textContent = player.money;
 }
 
-
+function setHeaderButtons(){
+    const buttons = document.getElementsByClassName("header-button");
+    console.log(buttons);
+    for(let i =0;i<buttons.length;i++){
+        const button = buttons[i];
+        button.onclick = ()=>{ popupButton(button);}
+    }
+}
 
 function gen_lottery(ticket){
-    console.log(ticket);
+
     const width = ticket.width;
     const height = ticket.height;
+
     const cells = document.getElementById("cells");
+    cells.replaceChildren()
     const ticket_name = document.getElementById("ticket-name");
+
     ticket_name.textContent = ticket.name;
+
     for(let r = 0;r<height;r++){
+
         const cell_row = document.createElement("div");
         cell_row.className = "cell-row";
 
         for(let i =0;i<width;i++){
+
             const cell = document.createElement("div");
             const cellObj = ticket.cellArray[r][i];
             cell.className = "cell";
             cell.innerHTML = `<img src = ${cellObj.img}> <p>$${cellObj.value}</p>`;
 
             cell.onclick = function (){
+
                 const img = cell.getElementsByTagName("img")[0]
                 const p = cell.getElementsByTagName("p")[0]
 
                 p.style.opacity = Number(p.style.opacity) + .2;
                 img.style.opacity = Number(img.style.opacity) + .2;
+
                 if(p.style.opacity =='1'){
+
                     this.onclick = null;
+
                     if(ticket.winning_imgs.includes(cellObj.img)){
+
                         const winSFX = new Audio(ticket.winSFX);
                         winSFX.play();
                         addMoney(cellObj.value);
@@ -161,11 +263,14 @@ function gen_lottery(ticket){
         }
         cells.appendChild(cell_row);
     }
+    const winners = document.getElementById("winners");
+    winners.replaceChildren();
     for(let i =0;i<ticket.winning_imgs.length;i++){
-        const winners = document.getElementById("winners");
         const winning_img = document.createElement("img");
         winning_img.src = ticket.winning_imgs[i];
         winners.appendChild(winning_img);
     }
 }
+gen_inventory();
+setHeaderButtons();
 gen_lottery(test_ticket);
