@@ -28,13 +28,13 @@ class Booster extends Item{
 
 class FluffyDice extends Booster{
     constructor(){
-        super("Fluffy Dice",1,"Adds 0.01 to Luck Boost","luckBoost",.01);
+        super("Fluffy Dice",10,"Adds 0.01 to Luck Boost","luckBoost",.01);
     }
 }
 
 class TwoOfDiamonds extends Booster{
     constructor(){
-        super("2 of Diamonds",0,"Adds 1 to Win Boost","winBoost",1);
+        super("2 of Diamonds",50,"Adds 1 to Win Boost","winBoost",1);
     }
 }
 
