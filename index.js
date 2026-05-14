@@ -1,15 +1,16 @@
 
 class Item{
-    constructor(name,description){
+    constructor(name,price,description){
         this.name=name;
+        this.price = price
         this.description=description;
         this.img = `resources/images/items/${this.name}.png`;
     }
 }
 
 class Booster extends Item{
-    constructor(name,description,stat,increment){
-        super(name,description);
+    constructor(name,price,description,stat,increment){
+        super(name,price,description);
         this.stat = stat;
         this.increment = increment;
     }
@@ -18,16 +19,24 @@ class Booster extends Item{
             case "luckBoost":
                 player.luckBoost+=this.increment;
             break;
+            case "winBoost":
+                player.winBoost+=this.increment;
+            break;
         }
     }
 }
 
 class FluffyDice extends Booster{
     constructor(){
-        super("Fluffy Dice","Adds 0.01 to Luck Boost","luckBoost",.01);
+        super("Fluffy Dice",1,"Adds 0.01 to Luck Boost","luckBoost",.01);
     }
 }
 
+class TwoOfDiamonds extends Booster{
+    constructor(){
+        super("2 of Diamonds",0,"Adds 1 to Win Boost","winBoost",1);
+    }
+}
 
 class Player{
     constructor(){
@@ -41,7 +50,6 @@ class Player{
     }
 
     addItem(item){
-        console.log(item);
         if(item instanceof Item){
             if(item instanceof Booster){
                 if(item.name in this.items["Booster"]){
@@ -57,7 +65,6 @@ class Player{
         else if(item instanceof Ticket){
             console.log("Ticket");
         }
-        console.log(this);
     }
 }
 
@@ -129,10 +136,24 @@ class Base_Ticket extends Ticket{
     }
 }
 
-const player = new Player();
-for(let i =0;i<50;i++){
-     player.addItem(new FluffyDice());
+class Premium_Ticket extends Ticket{
+    constructor(){
+        const winning_imgs = [
+            "resources/images/ticket_images/premium_ticket/heart.png",
+            "resources/images/ticket_images/premium_ticket/spade.png",
+            "resources/images/ticket_images/premium_ticket/diamond.png"
+        ]
+        const losing_imgs = [
+            "resources/images/ticket_images/premium_ticket/joker.png"
+        ]
+        const winSFX = "resources/audio/base_ticket/collect.mp3";
+
+        super("Premium Ticket",5,5,winning_imgs,losing_imgs,50,10,winSFX,10)
+    }
 }
+
+const player = new Player();
+
 const test_ticket = new Base_Ticket();
 
 function popupButton(element){
@@ -185,18 +206,25 @@ function gen_inventory(){
 }
 
 function addMoney(value){
-    player.money += value;
     const addition = document.createElement("p");
     const money_amount = document.getElementById("money-amount");
     const money_amount_body = money_amount.getBoundingClientRect();
     const body = document.getElementsByTagName("body")[0];
+    if(value>0){
+        value = value* (1+player.winBoost);
+        addition.textContent = `+$${value}`;
+    }
+    else{
+        addition.style.color = "red";
+        addition.textContent = `-$${value}`
+    }
+    player.money += value;
     addition.className = "addition";
     addition.style.top = `${money_amount_body.top}px`;
     addition.style.left = `${money_amount_body.left}px`;
-    addition.textContent = `+$${value}`;
 
     body.appendChild(addition);
-    remove(addition)
+    remove(addition);
     money_amount.textContent = player.money;
 }
 
@@ -271,6 +299,64 @@ function gen_lottery(ticket){
         winners.appendChild(winning_img);
     }
 }
+function gen_shops(){
+    const tickets = [Base_Ticket,Premium_Ticket]
+    const items = [FluffyDice,TwoOfDiamonds];
+    const shopItems = document.getElementById("shop-items");
+
+    for(let i = 0;i<items.length;i++){
+        const item = new items[i]();
+        const shop_item = document.createElement("div");
+        shop_item.className = "shop-item";
+        shop_item.classList.add("handjet")
+        shop_item.innerHTML = `<img src='${item.img}'>
+                    <div class = "item-info">
+                        <p>${item.name} ($${item.price})</p>
+                        <p>${item.description}</p>
+                    </div>
+                    <div class = "buy-button">
+                        <p>Buy</p>
+                    </div>`
+        const buyButton = shop_item.getElementsByClassName("buy-button")[0];
+        buyButton.onclick = function (){
+            if(player.money >= item.price){
+                addMoney(-item.price);
+                player.addItem(new items[i]());
+                gen_inventory();
+                
+            }
+        }
+        shopItems.appendChild(shop_item);
+
+    }
+
+    const ticket_items = document.getElementById("ticket-items");
+
+        for(let i = 0; i<tickets.length;i++){
+            const ticket = new tickets[i]();
+            const ticket_item = document.createElement("div");
+            ticket_item.className = "shop-item"
+            ticket_item.classList.add("handjet");
+            ticket_item.innerHTML = `
+                    <div class = "item-info">
+                        <p>${ticket.name} ($${ticket.price})</p>
+                    </div>
+                    <div class = "buy-button">
+                        <p>Buy</p>
+                    </div>`
+            const buyButton = ticket_item.getElementsByClassName("buy-button")[0];
+            buyButton.onclick = function() {
+                if(player.money >= ticket.price){
+                addMoney(-ticket.price);
+                gen_lottery(new tickets[i]());
+                
+            }
+            }
+            ticket_items.appendChild(ticket_item);
+
+        }
+}
+gen_shops();
 gen_inventory();
 setHeaderButtons();
 gen_lottery(test_ticket);
